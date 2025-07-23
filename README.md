@@ -54,5 +54,5 @@ This dashboard focuses on:
 - Added `Revenue` column (`Quantity × UnitPrice`)
 - Extracted `Month` from `InvoiceDate` for time-based analysis
 
-## 📂 Project Structure
+
 

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from wordcloud import WordCloud
 
-# Load Data
+
 @st.cache_data
 def load_data():
     df = pd.read_csv("data.csv", encoding='ISO-8859-1')
@@ -16,12 +16,10 @@ def load_data():
     return df
 
 df = load_data()
-
-# Header
 st.title("🛍️ UK E-Commerce Dashboard")
 st.markdown("Get insights on sales, customer behavior, and top-performing products!")
 
-# KPIs
+
 col1, col2, col3 = st.columns(3)
 col1.metric("Total Revenue", f"£{df['TotalPrice'].sum():,.0f}")
 col2.metric("Unique Customers", df['CustomerID'].nunique())
@@ -29,7 +27,6 @@ col3.metric("Total Transactions", df['InvoiceNo'].nunique())
 
 st.markdown("---")
 
-# 1. Monthly Revenue Trend
 st.subheader("📈 Monthly Revenue Trend")
 df['Month'] = df['InvoiceDate'].dt.to_period('M').astype(str)
 monthly_revenue = df.groupby('Month')['TotalPrice'].sum().reset_index()
@@ -41,7 +38,7 @@ plt.ylabel("Revenue (£)")
 plt.title("Monthly Revenue Trend")
 st.pyplot(fig1)
 
-# 2. Top 10 Products by Sales
+
 st.subheader("🏆 Top 10 Best-Selling Products")
 top_products = df.groupby('Description')['Quantity'].sum().sort_values(ascending=False).head(10)
 
@@ -52,7 +49,7 @@ plt.xlabel("Units Sold")
 plt.ylabel("Product")
 st.pyplot(fig2)
 
-# 3. Revenue by Hour of Day
+
 st.subheader("⏰ Revenue by Hour of Day")
 df['Hour'] = df['InvoiceDate'].dt.hour
 hourly = df.groupby('Hour')['TotalPrice'].sum().reset_index()
@@ -63,7 +60,7 @@ plt.title("Revenue by Hour of the Day")
 plt.ylabel("Revenue (£)")
 st.pyplot(fig3)
 
-# 4. Top Customers
+
 st.subheader("💰 Top 5 Customers by Revenue")
 top_customers = df.groupby('CustomerID')['TotalPrice'].sum().sort_values(ascending=False).head(5)
 
@@ -74,7 +71,7 @@ plt.xlabel("Customer ID")
 plt.ylabel("Total Revenue (£)")
 st.pyplot(fig4)
 
-# 5. Word Cloud of Most Sold Products
+
 st.subheader("🛒 Word Cloud of Product Descriptions")
 wordcloud = WordCloud(width=800, height=400, background_color='white').generate(' '.join(df['Description']))
 fig5, ax5 = plt.subplots(figsize=(10, 5))
@@ -82,10 +79,10 @@ ax5.imshow(wordcloud, interpolation='bilinear')
 ax5.axis('off')
 st.pyplot(fig5)
 
-# 6. Recency-Frequency-Monetary (RFM) Segmentation
+
 st.subheader("📊 Customer Segmentation (RFM)")
 
-# RFM Calculation
+
 snapshot_date = df['InvoiceDate'].max() + pd.Timedelta(days=1)
 rfm = df.groupby('CustomerID').agg({
     'InvoiceDate': lambda x: (snapshot_date - x.max()).days,
@@ -94,8 +91,8 @@ rfm = df.groupby('CustomerID').agg({
 }).reset_index()
 rfm.columns = ['CustomerID', 'Recency', 'Frequency', 'Monetary']
 
-# Show sample of RFM table
 st.dataframe(rfm.sort_values(by='Monetary', ascending=False).head())
 
 # Optional Download
 st.download_button("📥 Download Cleaned Data", df.to_csv(index=False), "cleaned_data.csv", "text/csv")
+
